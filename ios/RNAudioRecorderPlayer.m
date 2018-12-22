@@ -206,7 +206,8 @@ RCT_EXPORT_METHOD(startPlayer:(NSString*)path
         if ([path isEqualToString:@"DEFAULT"]) {
             audioFileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"sound.m4a"]];
         } else {
-            audioFileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:path]];
+            audioFileURL = [NSURL fileURLWithPath:path];
+//          audioFileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:path]];
         }
 
         if (!audioPlayer) {
