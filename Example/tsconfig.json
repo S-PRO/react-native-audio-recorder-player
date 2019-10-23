@@ -1,26 +1,55 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "allowJs": true,
+    "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "jsx": "react-native",
-    "lib": ["es2017"],
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es2015",
+      "es2016",
+      "es2017"
+    ],
+    "skipLibCheck": true,
     "module": "es2015",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "noEmit": true,
+    "noEmitHelpers": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
     "noImplicitAny": false,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
+    "strictNullChecks": false,
     "strict": true,
     "target": "es2017",
-    "baseUrl": "src"
+    "paths": {
+      "@apis/*": ["./src/apis/*"],
+      "@screen/*": ["./src/components/screen/*"],
+      "@navigation/*": ["./src/components/navigation/*"],
+      "@models/*": ["./src/models/*"],
+      "@stores/*": ["./src/stores/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@STRINGS": ["./STRINGS"],
+      "@assets/*": ["./assets/*"],
+      "@shared/*": ["./src/components/shared/*"],
+      "@app": ["./src/app"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "**/*.test.tsx", "**/*.spec.ts"],
-  "types": ["typePatches"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.tsx",
+    "**/*.spec.ts"
+  ],
+  "types": [
+    "typePatches"
+  ],
   "jest": {
     "globals": {
       "ts-jest": {
@@ -28,6 +57,5 @@
         // "tsConfigFile": "my-tsconfig.json"
       }
     }
-  },
-  "files": ["environment.d.ts"]
+  }
 }

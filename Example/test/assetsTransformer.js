@@ -2,7 +2,7 @@
  * Prevent error from requiring asset during test.
  * https://github.com/facebook/jest/issues/2663
  */
-import path from 'path';
+const path = require('path');
 
 module.exports = {
   process(src, filename, config, options) {

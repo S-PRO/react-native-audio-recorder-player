@@ -37,10 +37,6 @@ build/
 .gradle
 local.properties
 *.iml
-android/gradlew
-android/gradlew.bat
-android/gradle/wrapper/gradle-wrapper.jar
-android/gradle/wrapper/gradle-wrapper.properties
 
 # BUCK
 buck-out/
@@ -48,11 +44,3 @@ buck-out/
 *.keystore
 
 Example/android/java_*
-Example/package-lock.json
-package-lock.json
-
-# Built files
-tsconfig.tsbuildinfo
-index.js.flow
-index.d.ts
-index.js

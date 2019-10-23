@@ -1,6 +1,6 @@
 import LocalizedStrings from 'react-native-localization';
 
-const strings: any = new LocalizedStrings({
+const strings = new LocalizedStrings({
   en: {
     TITLE: 'Audio Recorder Player',
     PLAY: 'Play',
@@ -8,7 +8,7 @@ const strings: any = new LocalizedStrings({
     STOP: 'Stop',
     RECORD: 'Record',
   },
-  ko: {
+  kr: {
     TITLE: '오디오 녹음 / 플레이어',
     PLAY: '재생',
     PAUSE: '일시정지',

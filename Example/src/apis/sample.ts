@@ -1,15 +1,12 @@
 const ROOT_URL = 'http://localhost:3000/api';
 
-export const sample = async (
-  body: object
-  // signal?: AbortController['signal']
-) => {
+export const sample = async (body: object, signal?: AbortController['signal']) => {
   try {
     let res: any = await fetch(`${ROOT_URL}/sample`, {
-      // signal,
+      signal,
       method: 'POST',
       headers: new Headers({
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
@@ -21,6 +18,8 @@ export const sample = async (
     }
     return null;
   } catch (err) {
+    console.log('googleLogin err');
+    console.log(err);
     throw new Error(err);
   }
 };

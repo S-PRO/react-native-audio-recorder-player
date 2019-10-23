@@ -1,90 +1,77 @@
-import { NavigationComponent, NavigationRouteConfig } from 'react-navigation';
-
-import Intro from '../screen/Intro';
 import React from 'react';
-import { ScreenProps } from './SwitchNavigator';
-import Temp from '../screen/Temp';
-import { Text } from 'react-native';
-import { createStackNavigator } from 'react-navigation-stack';
+import { AsyncStorage, View, Platform } from 'react-native';
+import { StackNavigator, NavigationActions } from 'react-navigation';
+import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator';
 
-const routeConfig: NavigationRouteConfig = {
-  Intro: {
-    screen: Intro,
-    navigationOptions: ({
-      navigation,
-      screenProps,
-    }: {
-      navigation: NavigationComponent;
-      screenProps: ScreenProps;
-    }) => {
-      const { theme } = screenProps;
-      return {
-        title: navigation.state.routeName,
-        headerStyle: {
-          backgroundColor: theme.background,
-        },
-        headerTitleStyle: { color: theme.fontColor },
-        headerTintColor: theme.tintColor,
-      };
-    },
-    path: 'intro',
-  },
-  Temp: {
-    screen: Temp,
-    navigationOptions: ({
-      navigation,
-      screenProps,
-    }: {
-      navigation: NavigationComponent;
-      screenProps: ScreenProps;
-    }) => {
-      const { theme } = screenProps;
-      return {
-        headerTitle: (
-          <Text
-            style={{
-              fontSize: 18,
-            }}
-          >
-            {navigation.state.routeName}
-          </Text>
-        ),
-        headerStyle: {
-          backgroundColor: theme.background,
-        },
-        headerTitleStyle: { color: theme.fontColor },
-        headerTintColor: theme.tintColor,
-      };
-    },
-    path: 'temp',
-  },
-};
+import Intro from '@screen/Intro';
+import NotFound from '@screen/NotFound';
+import { inject, observer } from 'mobx-react/native';
 
-const navigatorConfig = {
-  initialRouteName: 'Intro',
-  // mode: 'card',
-  // headerMode: 'screen',
-  // headerMode: 'none',
-};
+interface IState {
+  startPage: string;
+}
 
-const RootStackNavigator = createStackNavigator(routeConfig, navigatorConfig);
+@inject('store') @observer
+class RootNavigator extends React.Component<any, IState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      startPage: '',
+    };
+  }
 
-// interface Props {
-//   navigation?: any;
-//   theme?: object;
-// }
+  public componentDidMount() {
+    this.initPage();
+  }
 
-// class RootNavigator extends React.Component<Props> {
-//   private static router = RootStackNavigator.router;
+  public initPage = async () => {
+    const startPage = 'Intro';
+    console.log('startPage: ' + startPage);
+    this.setState({ startPage });
+  }
 
-//   public render() {
-//     return (
-//       <RootStackNavigator
-//         navigation={this.props.navigation}
-//         screenProps={{ theme: this.props.theme }}
-//       />
-//     );
-//   }
-// }
+  public render() {
+    const routeConfig = {
+      Intro: {
+        screen: Intro,
+        path: 'intro',
+      },
+      NotFound: {
+        screen: NotFound,
+      },
+    };
 
-export default RootStackNavigator;
+    const navigatorConfig = {
+      initialRouteName: this.state.startPage,
+      header: null,
+      headerMode: 'none',
+      gesturesEnabled: true,
+      statusBarStyle: 'light-content',
+      transitionConfig: () => ({ screenInterpolator:
+        this.props.store.rootNavigatorActionHorizontal
+          ? CardStackStyleInterpolator.forHorizontal
+          : CardStackStyleInterpolator.forVertical,
+      }),
+    };
+
+    // FIXED: Current fix for navigating twice
+    const RootStackNavigator = StackNavigator(routeConfig, navigatorConfig);
+    // if (Platform.OS === 'ios') {
+    //   const navigateOnce = (getStateForAction) => (action, state) => {
+    //     const { type, routeName } = action;
+    //     return (
+    //       state &&
+    //       type === NavigationActions.NAVIGATE &&
+    //       routeName === state.routes[state.routes.length - 1].routeName
+    //     ) ? null : getStateForAction(action, state);
+    //   };
+    //   RootStackNavigator.router.getStateForAction = navigateOnce(RootStackNavigator.router.getStateForAction);
+    // }
+
+    return (
+      <RootStackNavigator />
+    );
+  }
+}
+
+export default RootNavigator;

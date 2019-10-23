@@ -4,7 +4,6 @@ package com.dooboolab;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.Callback;
 
 import android.Manifest;
@@ -16,9 +15,9 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.PermissionChecker;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -39,7 +38,6 @@ import javax.annotation.Nullable;
 public class RNAudioRecorderPlayerModule extends ReactContextBaseJavaModule implements PermissionListener{
   final private static String TAG = "RNAudioRecorderPlayer";
   final private static String FILE_LOCATION = "/sdcard/sound.mp4";
-  private String audioFileURL = "";
 
   private int subsDurationMillis = 100;
 
@@ -63,7 +61,7 @@ public class RNAudioRecorderPlayerModule extends ReactContextBaseJavaModule impl
   }
 
   @ReactMethod
-  public void startRecorder(final String path, final ReadableMap audioSet, Promise promise) {
+  public void startRecorder(final String path, Promise promise) {
     try {
       if (
           Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -85,26 +83,17 @@ public class RNAudioRecorderPlayerModule extends ReactContextBaseJavaModule impl
       return;
     }
 
-    audioFileURL = (path.equals("DEFAULT")) ? FILE_LOCATION : path;
-
     if (mediaRecorder == null) {
       mediaRecorder = new MediaRecorder();
-    }
-
-    if (audioSet != null) {
-      mediaRecorder.setAudioSource(audioSet.hasKey("AudioSourceAndroid")
-        ? audioSet.getInt("AudioSourceAndroid") : MediaRecorder.AudioSource.MIC);
-      mediaRecorder.setOutputFormat(audioSet.hasKey("OutputFormatAndroid")
-        ? audioSet.getInt("OutputFormatAndroid") : MediaRecorder.OutputFormat.MPEG_4);
-      mediaRecorder.setAudioEncoder(audioSet.hasKey("AudioEncoderAndroid")
-        ? audioSet.getInt("AudioEncoderAndroid") : MediaRecorder.AudioEncoder.AAC);
-    } else {
       mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
       mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-      mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+      mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+      if (path.equals("DEFAULT")) {
+        mediaRecorder.setOutputFile(FILE_LOCATION);
+      } else {
+        mediaRecorder.setOutputFile(path);
+      }
     }
-
-    mediaRecorder.setOutputFile(audioFileURL);
 
     try {
       mediaRecorder.prepare();
@@ -122,7 +111,8 @@ public class RNAudioRecorderPlayerModule extends ReactContextBaseJavaModule impl
       };
       this.recorderRunnable.run();
 
-      promise.resolve("file://" + audioFileURL);
+      String resolvedPath = (path.equals("DEFAULT")) ? FILE_LOCATION : path;
+      promise.resolve("file://" + resolvedPath);
     } catch (Exception e) {
       Log.e(TAG, "Exception: ", e);
       promise.reject("startRecord", e.getMessage());
@@ -143,7 +133,7 @@ public class RNAudioRecorderPlayerModule extends ReactContextBaseJavaModule impl
     mediaRecorder.release();
     mediaRecorder = null;
 
-    promise.resolve("file://" + audioFileURL);
+    promise.resolve("recorder stopped.");
   }
 
   @ReactMethod
